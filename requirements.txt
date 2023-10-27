@@ -1,0 +1,2 @@
+argparse==1.4.0
+jstyleson==0.0.2

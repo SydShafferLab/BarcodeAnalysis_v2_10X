@@ -1,0 +1,17 @@
+{
+    //This .json file will contain all the paths and variables to run the functions in this pipeline
+
+    //Path to BarcodeAnalysis_v2
+    "scripts_path": "/project/shafferslab/Raymond/BarcodeAnalysis_v2", 
+    
+
+    //Path to input folder containing all *_unmapped.txt files that were generated from extract_unmapped.sh
+    "folder_path": "/project/shafferslab/Raymond/RWSN066/lineage_txt_2",
+    
+    //These are the 16bp sequences that flank the 20bp semi-random barcode. This should not be changed. 
+    "target1": "GTTTTAGAGCTAGAAA",
+    "target2": "AAAGGACGAAACACCG",
+
+    //This is the maximum levenschtein distance allowed for two sequences to be considered the same
+    "sc_mm": 4
+}
