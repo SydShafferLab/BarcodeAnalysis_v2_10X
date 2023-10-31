@@ -38,11 +38,11 @@ Once you've successfully run `step1.sh` on all your 10X files, move all your `.t
 ## Step 2: Cluster barcodes
 1. Activate the python environment (you should do this everytime you run step2 code). Enter: `source /path/to/BarcodeAnalysis_v2_10X/bcEnv/bin/activate`.   
 2. Inspect `step2.sh`. The only parts of this script that you should change are the `#BSUB` options. You'll notice that this script calls `ExtractBarcodes_10X.py`, and your variables will be called from `paths_and_variables.json`.    
-3. Inspect `paths_and_variables.json`. These are the variables that you'll need to change.    
-  1. `scripts_path`: Input `path/to/BarcodeAnalysis_v2_10X`
-  2. `folder_path`: Input the path to the directory that holds all your `.txt` output from Step 1. 
-  3. `target1` and `target2`: These are the sequences that flank the 20bp lineage barcode. If you are using barcode_v2 from the Shaffer Lab, you should not need to change these sequences.  
-  4. `sc_mm`: This is the maximum levenschtein distances allowed for two barcode sequences to be considered the same. You may need to empirically determine the optimal `sc_mm` to get your expected number of unique barcodes. The highest value that the software allows for is 8. 
+3. Inspect `paths_and_variables.json`. These are the variables that you'll need to change:    
+   1. `scripts_path`: Input `path/to/BarcodeAnalysis_v2_10X`
+   2. `folder_path`: Input the path to the directory that holds all your `.txt` output from Step 1. 
+   3. `target1` and `target2`: These are the sequences that flank the 20bp lineage barcode. If you are using barcode_v2 from the Shaffer Lab, you should not need to change these sequences.  
+   4. `sc_mm`: This is the maximum levenschtein distances allowed for two barcode sequences to be considered the same. You may need to empirically determine the optimal `sc_mm` to get your expected number of unique barcodes. The highest value that the software allows for is 8. 
 4. Submit this job to the cluster by inputting `cd path/to/BarcodeAnalysis_v2_10X` and `bsub < step2.sh`. 
     
 After successfully running `step2.sh`, you should see the following output files:
