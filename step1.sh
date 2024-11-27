@@ -13,10 +13,17 @@ cd /project/shafferslab/Raymond/RWSN066/T3/outs
 samtools view -b -f 4 possorted_genome_bam.bam > unmapped.bam
 
 samtools view unmapped.bam | awk '{
+    cb = ""; umi = "";
     for (i = 12; i <= NF; i++) {
         if ($i ~ /^CB:Z:/) {
-            cb = substr($i, 6);  # Extracts the cell barcode value after "CB:Z:"
+            cb = substr($i, 6);
+        }
+        if ($i ~ /^UB:Z:/) {
+            umi = substr($i, 6);
         }
     }
-    print cb "\t" $10;  # Print cell barcode and read sequence
+    if (cb != "" && umi != "") {
+        print cb "\t" umi "\t" $10; # Print cell barcode, UMI, and read sequence, ignoring lines without a cell barcode or umi
+    }
+    
 }' > T3_unmapped.txt

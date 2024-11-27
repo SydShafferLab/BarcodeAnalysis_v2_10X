@@ -24,15 +24,15 @@ def process_file(folder_path, target1, target2):
         if filename.endswith("unmapped.txt"):
             with open(os.path.join(folder_path, filename), 'r') as file:
                 for line in file:
-                    # Split the line into cell barcode and sequence
-                    cell_barcode, sequence = line.strip().split()
+                    # Split the line into cell barcode, umi and sequence
+                    cell_barcode, umi, sequence = line.strip().split()
 
                     # Check for target1
                     if target1 in sequence:
                         index = sequence.index(target1)
                         if index >= 20:
                             preceding_20bp = sequence[index-20:index]
-                            output_table.append((cell_barcode, preceding_20bp, "Target1", filename))
+                            output_table.append((cell_barcode, umi, preceding_20bp, "Target1", filename))
                             bp_output_table.append(preceding_20bp)
 
                     # Check for target2
@@ -40,7 +40,7 @@ def process_file(folder_path, target1, target2):
                         index = sequence.index(target2)
                         if index + 16 + 20 <= len(sequence):
                             succeeding_20bp = sequence[index+16:index+16+20]
-                            output_table.append((cell_barcode, succeeding_20bp, "Target2", filename))
+                            output_table.append((cell_barcode, umi, succeeding_20bp, "Target2", filename))
                             bp_output_table.append(succeeding_20bp)
 
     # Write the output_table to the specified output file
@@ -95,20 +95,27 @@ def modify_barcode(folder_path):
     # Replace the values in EB_output.txt based on the dictionary
     for index, lineage_barcode in replace_dict.items():
         if 1 <= index <= len(input_lines):  # Check if index is valid
-            input_lines[index - 1][1] = lineage_barcode
+            input_lines[index - 1][2] = lineage_barcode #Use column 3 now that UMI is in column 2 instead of lineage barcodes:
 
     # Write the modified contents back to a file within the folder
     with open(f"{folder_path}/EB_output_modified.txt", "w") as file:
         for line in input_lines:
             file.write('\t'.join(line) + '\n')
 
-    # Generate combo_counts.txt based on sc_input_modified.txt
-    combo_counts = Counter(['\t'.join(line) for line in input_lines])
+    # Generate combo_counts.txt based on sc_input_modified.txt, now adding counting the number of UMIs of a barcode per cell:
+    cb_barcode_umi_counts = {}
+    for line in input_lines:
+        cell_barcode = line[0]
+        umi = line[1]
+        barcode = line[2]
+        key = (cell_barcode, barcode)
+        if key not in cb_barcode_umi_counts:
+            cb_barcode_umi_counts[key] = set()
+        cb_barcode_umi_counts[key].add(umi)
 
     with open(f"{folder_path}/combo_counts.txt", "w") as file:
-        for combo, count in combo_counts.items():
-            parts = combo.split('\t')
-            file.write(parts[0] + '\t' + parts[1] + '\t' + str(count) + '\n')
+        for (cell_barcode, barcode), umis in cb_barcode_umi_counts.items():
+            file.write(f"{cell_barcode}\t{barcode}\t{len(umis)}\n")
 
     print("Post-starcode cleanup complete!")
 
